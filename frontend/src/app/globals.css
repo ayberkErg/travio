@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --white: #ffffff;
+  --off-white: #fafaf9;
+  --stone-50: #f8f7f4;
+  --stone-100: #f0ede7;
+  --stone-200: #e3ded5;
+  --stone-500: #9b9285;
+  --stone-700: #574f45;
+  --ink: #1a1714;
+
+  --amber: #e8930a;
+  --amber-light: #fff7e6;
+  --amber-mid: #fcd97a;
+  --amber-dark: #c47808;
+
+  --teal: #0d7377;
+  --teal-light: #d9f0f1;
+
+  /* Yeni canlı renkler */
+  --coral: #ff5c35;
+  --coral-light: #fff0ed;
+  --violet: #7c3aed;
+  --violet-light: #f3eeff;
+  --emerald: #059669;
+  --emerald-light: #d1fae5;
+  --sky: #0284c7;
+  --sky-light: #e0f2fe;
+
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --background: var(--off-white);
+  --foreground: var(--ink);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--off-white);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-amber text-white font-semibold px-6 py-3 rounded-pill hover:bg-amber-dark transition-colors shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 bg-stone-100 text-ink font-semibold px-6 py-3 rounded-pill hover:bg-stone-200 transition-colors;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-stone-200 p-6;
+  }
+
+  .input-field {
+    @apply w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-ink placeholder-stone-400 focus:outline-none focus:border-amber focus:bg-white transition-all font-medium;
+  }
+
+  /* Canlı rozet stilleri */
+  .badge-amber  { @apply inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-pill bg-amber-light text-amber; }
+  .badge-coral  { @apply inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-pill bg-coral-light text-coral; }
+  .badge-violet { @apply inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-pill bg-violet-light text-violet; }
+  .badge-teal   { @apply inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-pill bg-teal-light text-teal; }
+  .badge-emerald{ @apply inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-pill bg-emerald-light text-emerald; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .font-display { font-family: var(--font-serif); }
+
+  /* Gradient metinler */
+  .text-gradient-amber {
+    background: linear-gradient(135deg, #e8930a 0%, #f5b731 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-fire {
+    background: linear-gradient(135deg, #ff5c35 0%, #e8930a 60%, #f5b731 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-ocean {
+    background: linear-gradient(135deg, #0284c7 0%, #0d7377 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Arka plan desenleri */
+  .bg-grid {
+    background-image: radial-gradient(circle, #e3ded5 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .bg-dots-dark {
+    background-image: radial-gradient(circle, rgba(250,250,249,0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .bg-lines {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 20px,
+      rgba(232,147,10,0.04) 20px,
+      rgba(232,147,10,0.04) 21px
+    );
+  }
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+}
+
+/* Tailwind'e yeni renkler ekle */
+@layer utilities {
+  .bg-coral { background-color: var(--coral); }
+  .bg-coral-light { background-color: var(--coral-light); }
+  .text-coral { color: var(--coral); }
+  .bg-violet { background-color: var(--violet); }
+  .bg-violet-light { background-color: var(--violet-light); }
+  .text-violet { color: var(--violet); }
+  .bg-emerald-light { background-color: var(--emerald-light); }
+  .text-emerald { color: var(--emerald); }
+  .bg-sky-light { background-color: var(--sky-light); }
+  .text-sky { color: var(--sky); }
+  .bg-amber-dark { background-color: var(--amber-dark); }
+  .hover\:bg-amber-dark:hover { background-color: var(--amber-dark); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fade-up 0.5s ease forwards;
+}
