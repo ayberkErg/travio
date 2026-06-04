@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip freeze *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(npx tsc *)",
+      "Bash(curl *)",
+      "Read(//tmp/**)",
+      "Bash(sed -i '' \"s|\\\\['#ornek', 'Demo'\\\\]|\\\\['#ornek', 'Örnek Plan'\\\\]|g\" /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(marketing\\\\\\)/landing/page.tsx)",
+      "Bash(sed -i '' 's|Demo Planı Gör|Planlamaya Başla|g' /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(marketing\\\\\\)/landing/page.tsx)",
+      "Bash(sed -i '' 's|>Demo</Link>|>Kayıt Ol</Link>|g' /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(marketing\\\\\\)/landing/page.tsx)",
+      "Bash(sed -i '' 's|Planın tamamını gör →|Hemen Başla →|g' /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(marketing\\\\\\)/landing/page.tsx)",
+      "Bash(sed -i '' 's|Demo Plan Gör|Planlamaya Başla|g' /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(marketing\\\\\\)/landing/page.tsx)",
+      "Bash(sed -i '' 's|href=\"/auth/register\" className=\"btn-primary text-base px-8 py-4 shadow-amber text-base\"|href=\"/plan/new\" className=\"btn-primary text-base px-8 py-4 shadow-amber\"|g' /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(marketing\\\\\\)/landing/page.tsx)",
+      "Bash(sed -i '' 's|href=\"/auth/register\" className=\"bg-white text-amber|href=\"/plan/new\" className=\"bg-white text-amber|g' /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(marketing\\\\\\)/landing/page.tsx)",
+      "Bash(git -C /Users/ayberkerguc/Desktop/gezio rev-parse --is-inside-work-tree)",
+      "Bash(npm list *)",
+      "Bash(npx vercel *)",
+      "Bash(npx railway *)",
+      "Bash(rm -rf frontend/.git)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

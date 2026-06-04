@@ -1,0 +1,565 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TRAVIO — CLAUDE CODE KOMUTLARI (TOKEN-OPTİMİZED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TOKEN TASARRUFU 7 KURALI
+─────────────────────────
+1. Her oturum başı: "CLAUDE.md oku, kaldığımız yerden devam et"
+2. Her komut sonu: "Sadece [dosya adı] dosyasını yaz, başkasına dokunma"
+3. Detay lazımsa: "TRAVIO_SPEC.md Bölüm X'i oku"
+4. Görsel lazımsa: "travio_v3_final.html [bölüm] referans al"
+5. Büyük sayfaları böl: önce iskelet, sonra bölüm bölüm
+6. Her oturum sonunda CLAUDE.md'yi güncelle
+7. Hata kurallarını önceden söyle, düzeltme döngüsünden kaç
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BAŞLAMADAN ÖNCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Yapılacaklar (sırasıyla):
+1. Klasör oluştur: mkdir travio && cd travio
+2. 3 dosyayı koy: CLAUDE.md, TRAVIO_SPEC.md, travio_v3_final.html
+3. Hesapları aç: GitHub, Supabase, Gemini AI Studio, Groq, Railway, Vercel
+4. API keylerini al: Gemini (aistudio.google.com), Groq (console.groq.com)
+5. Claude Code başlat: claude
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 1 — PROJE İSKELETİ (~30 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[1A] BAŞLANGIÇ KONTROLÜ
+───────────────────────
+CLAUDE.md oku. Projeyi anlat, sonra sor: başlayalım mı?
+───────────────────────
+
+
+[1B] İSKELET
+───────────────────────
+CLAUDE.md oku.
+
+frontend/ ve backend/ iskeletini kur:
+- frontend: Next.js 14 App Router, TypeScript, Tailwind
+- backend: FastAPI, Python 3.11
+- frontend/tailwind.config.ts: TRAVIO_SPEC.md Bölüm 7 renk/font değerleri
+- frontend/src/app/globals.css: CSS variables + Tailwind @layer
+- Her iki klasöre .env.example: TRAVIO_SPEC.md Bölüm 1
+- .gitignore
+
+Sadece iskelet dosyaları. Sayfa yazmaya başlama.
+───────────────────────
+
+✓ TEST: npm install && npm run dev → localhost:3000 açılıyor mu?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 2 — TEMEL DOSYALAR (~20 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[2A] OTURUM BAŞLANGIÇ (her oturumda bunu söyle)
+───────────────────────
+CLAUDE.md oku. Oturum 2: temel dosyalar. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[2B] TİPLER
+───────────────────────
+frontend/src/types/index.ts yaz.
+TRAVIO_SPEC.md Bölüm 2'deki tüm TypeScript tiplerini kullan.
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+[2C] STORE
+───────────────────────
+frontend/src/store/index.ts yaz.
+
+4 store: useAuthStore, usePersonaStore, usePlansStore, useUIStore
+zustand + persist middleware.
+TRAVIO_SPEC.md Bölüm 2 tip tanımları referans.
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+[2D] API CLIENT
+───────────────────────
+frontend/src/lib/api.ts yaz.
+
+TRAVIO_SPEC.md Bölüm 4 endpoint'leri uygula.
+Base URL: process.env.NEXT_PUBLIC_API_URL
+Token: localStorage'dan otomatik ekle.
+Generic: req<T>(path, options) → Promise<T>
+Gruplar: auth, persona, plans, chat, search, affiliate
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+[2E] UTILS
+───────────────────────
+frontend/src/lib/utils.ts yaz.
+
+Fonksiyonlar:
+- formatDate, formatCurrency, truncate, initials
+- getCategoryConfig(category) → renk+label+dot
+- getSafetyColor(level), isPlusUser(tier)
+- canGeneratePlan(tier, count) → {allowed, reason}
+- travioScoreLevel(score) → {name, emoji, next, percent}
+
+TRAVIO_SPEC.md Bölüm 6 score değerleri kullan.
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 3 — BACKEND (~45 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[3A]
+───────────────────────
+CLAUDE.md oku. Oturum 3: backend. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[3B] CONFIG VE ŞEMALAR
+───────────────────────
+2 dosya yaz:
+
+1. backend/app/core/config.py
+TRAVIO_SPEC.md Bölüm 1 env değişkenleri, pydantic-settings.
+
+2. backend/app/schemas/travel.py
+TRAVIO_SPEC.md Bölüm 2 tiplerini Pydantic v2 olarak yaz.
+Enum'lar, tüm modeller dahil.
+
+Sadece bu 2 dosyayı yaz.
+───────────────────────
+
+
+[3C] AI SERVİSİ
+───────────────────────
+backend/app/services/ai_service.py yaz.
+
+TRAVIO_SPEC.md Bölüm 5 sistem promptları kullan.
+
+AI_MODE=free → Gemini 1.5 Flash (plan) + Groq Llama 3.3 (chat)
+AI_MODE=paid → Claude Haiku (plan) + Claude Sonnet (chat)
+
+Metodlar: generate_plan(request, persona), concierge_chat(message, history)
+Hata: Gemini fail → Groq'a düş → hata mesajı
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+[3D] ENDPOINT'LER
+───────────────────────
+4 dosya yaz:
+
+1. backend/app/api/v1/persona.py → GET/POST/PUT /persona
+2. backend/app/api/v1/plans.py → POST generate, GET list/detail, DELETE, PUT favorite
+3. backend/app/api/v1/chat.py → POST /chat
+4. backend/app/api/v1/search.py → GET flights, hotels (şimdilik mock data)
+5. backend/app/api/v1/router.py → hepsini bağla
+6. backend/app/main.py → CORS, router, /health
+
+TRAVIO_SPEC.md Bölüm 4 endpoint listesi referans.
+Sadece bu 6 dosyayı yaz.
+───────────────────────
+
+✓ TEST: uvicorn app.main:app --reload → localhost:8000/docs açılıyor mu?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 4 — AUTH + LAYOUT (~45 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[4A]
+───────────────────────
+CLAUDE.md oku. Oturum 4: auth ve layout. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[4B] ROOT LAYOUT
+───────────────────────
+3 dosya yaz:
+
+1. frontend/src/app/layout.tsx
+Instrument Serif + Geist import, metadata Türkçe, Providers + Toaster.
+
+2. frontend/src/components/layout/Providers.tsx
+React Query provider, zustand hydration.
+
+3. frontend/src/app/page.tsx
+Auth varsa /dashboard, yoksa /auth/login redirect.
+
+Sadece bu 3 dosyayı yaz.
+───────────────────────
+
+
+[4C] AUTH SAYFALARI
+───────────────────────
+3 dosya yaz. travio_v3_final.html auth ekranları referans.
+
+1. frontend/src/app/auth/login/page.tsx
+Sol: email+şifre form. Sağ: koyu zemin serif slogan.
+Submit → api.auth.login → useAuthStore → /dashboard
+
+2. frontend/src/app/auth/register/page.tsx
+Ad, email, şifre, tekrar. Validasyon: min 8 char, eşleşme.
+Submit → api.auth.register → /auth/onboarding
+
+3. frontend/src/app/auth/onboarding/page.tsx
+5 adımlı wizard. TRAVIO_SPEC.md Bölüm 2 persona alanları.
+travio_v3_final.html onboarding ekranı birebir referans.
+Progress bar, adım geçiş animasyonu.
+Son adım → api.persona.create → /dashboard
+
+TypeScript strict, any kullanma. Sadece bu 3 dosyayı yaz.
+───────────────────────
+
+
+[4D] SIDEBAR VE HEADER
+───────────────────────
+3 dosya yaz. travio_v3_final.html referans.
+
+1. frontend/src/components/layout/Sidebar.tsx
+Logo, kullanıcı profili, nav linkleri (CLAUDE.md sayfa yapısı).
+Active state: usePathname. Plus promo kutusu (free kullanıcıya).
+
+2. frontend/src/components/layout/AppHeader.tsx
+Sayfa başlığı, mobil hamburger, bildirim ikonu.
+
+3. frontend/src/app/dashboard/layout.tsx
+Sidebar + AppHeader + main wrapper.
+
+4. frontend/src/components/ui/PlusModal.tsx
+useUIStore.plusModalOpen dinle. Aylık/yıllık, özellik listesi.
+TRAVIO_SPEC.md Bölüm 8 copy metinleri.
+
+Sadece bu 4 dosyayı yaz.
+───────────────────────
+
+✓ TEST: Kayıt ol → Onboarding → Dashboard görünüyor mu?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 5 — LANDING PAGE (~45 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[5A]
+───────────────────────
+CLAUDE.md oku. Oturum 5: landing page. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[5B] LANDING
+───────────────────────
+frontend/src/app/(marketing)/page.tsx yaz.
+travio_v3_final.html landing ekranını birebir uygula.
+
+Bölümler sırayla:
+nav → hero → marquee → how-it-works → differentiators →
+dark-band → destinations → pricing → cta → footer
+
+TRAVIO_SPEC.md Bölüm 8 copy metinleri kullan.
+Tüm CTA'lar /auth/register'a gitsin.
+Sadece bu dosyayı yaz.
+───────────────────────
+
+✓ TEST: /landing açılıyor mu? Mobil görünüm düzgün mü?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 6 — DASHBOARD + YENİ PLAN (~1 saat)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[6A]
+───────────────────────
+CLAUDE.md oku. Oturum 6: dashboard ve plan. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[6B] DASHBOARD
+───────────────────────
+frontend/src/app/dashboard/page.tsx yaz.
+
+İçerik:
+- Saate göre karşılama (Günaydın/İyi günler/İyi akşamlar)
+- 4 istatistik kartı (store'dan)
+- Hızlı erişim: Yeni Plan, Uçuş, Otel, Alarm, Keşfet, Profil
+- Son 4 plan (usePlansStore) — yüklenince api.plans.list()
+- Boş durum: CTA kartı
+
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+[6C] YENİ PLAN FORMU
+───────────────────────
+frontend/src/app/plan/new/page.tsx yaz.
+
+Form alanları: destinasyon*, kalkış, tarihler, kişi sayısı,
+bütçe, konaklama, amaç (chip), ilgi alanları (chip), tempo, özel not.
+
+Submit akışı:
+1. canGeneratePlan() → limit doluysa PlusModal aç
+2. api.plans.generate() çağır
+3. Loading: progress bar + değişen mesajlar
+   "Profilin analiz ediliyor..." / "Destinasyon araştırılıyor..." /
+   "Günlük rotalar oluşturuluyor..." / "Plan tamamlanıyor..."
+4. Başarı → /plan/[id]
+5. Hata → toast
+
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+[6D] PLAN DETAY
+───────────────────────
+frontend/src/app/plan/[id]/page.tsx yaz.
+
+Hero: destinasyon, flag emoji, özet, pratik bilgiler.
+4 sekme: Günlük Plan | Bütçe | Hazırlık Listesi | AI Asistan
+
+Günlük Plan: gün seçici + aktivite timeline.
+Her aktivite: saat, isim, açıklama, kategori badge, maliyet, booking linki.
+
+Bütçe: kategori progress bar'ları, toplam.
+Hazırlık: checkbox listesi (tıklanınca üstü çizilir) + güvenlik uyarıları.
+AI Asistan: chat, api.chat.send(), plan context otomatik dahil.
+
+Sağ panel: pratik bilgiler + affiliate kartlar (TRAVIO_SPEC.md Bölüm 9).
+Header: favori, paylaş, PDF (Plus) butonları.
+
+Sadece bu dosyayı yaz.
+───────────────────────
+
+✓ TEST: Plan oluştur → AI cevap veriyor mu? Detay açılıyor mu?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 7 — KALAN SAYFALAR (~45 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[7A]
+───────────────────────
+CLAUDE.md oku. Oturum 7: kalan sayfalar. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[7B] ARAÇ SAYFALARI
+───────────────────────
+4 dosya yaz:
+
+1. frontend/src/app/dashboard/saved/page.tsx
+Plan grid, filtre (tümü/favori/tamamlanan), arama.
+
+2. frontend/src/app/flights/page.tsx
+Nereden-nereye form → api.search.flights() → sonuç listesi.
+Skyscanner affiliate banner. AI ipucu.
+
+3. frontend/src/app/hotels/page.tsx
+Şehir+tarih form → api.search.hotels() → sonuç listesi.
+Booking.com affiliate banner.
+
+4. frontend/src/app/budget/page.tsx
+usePlansStore'dan tamamlanan planlar.
+Kategori progress bar'ları, toplam özeti.
+
+Sadece bu 4 dosyayı yaz.
+───────────────────────
+
+
+[7C] HESAP SAYFALARI
+───────────────────────
+4 dosya yaz:
+
+1. frontend/src/app/score/page.tsx
+travio_v3_final.html score ekranı birebir.
+Büyük skor, 5 seviye, istatistikler, paylaşım kartı.
+
+2. frontend/src/app/profile/page.tsx
+Avatar, kullanıcı bilgisi, AI özeti, ilgi alanı bar'ları.
+"Profili Güncelle" → /auth/onboarding
+
+3. frontend/src/app/alerts/page.tsx
+Aktif alarm listesi. Plus değilse promo kutu göster.
+
+4. frontend/src/app/settings/page.tsx
+Ad güncelle, para birimi, bildirim, abonelik, çıkış yap.
+
+Sadece bu 4 dosyayı yaz.
+───────────────────────
+
+
+[7D] KEŞFİF SAYFASI
+───────────────────────
+frontend/src/app/explore/page.tsx yaz.
+
+Kategori filtreleri, şehir kartları grid.
+Şehir tıklanınca /plan/new?destination=X
+AI önerisi banner'ı.
+
+Sadece bu dosyayı yaz.
+───────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 8 — SUPABASE ENTEGRASYONU (~45 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[8A]
+───────────────────────
+CLAUDE.md oku. Oturum 8: Supabase entegrasyonu. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[8B] SUPABASE KURULUMU
+───────────────────────
+4 dosya yaz:
+
+1. frontend/src/lib/supabase.ts
+createBrowserClient + createServerClient.
+
+2. backend/app/core/database.py
+SQLAlchemy async engine, Supabase PostgreSQL, get_db() dependency.
+
+3. backend/migrations/001_schema.sql
+TRAVIO_SPEC.md Bölüm 3 SQL şeması — tüm tablolar, RLS politikaları.
+
+4. frontend/src/middleware.ts
+Auth koruması: giriş yoksa /auth/login'e yönlendir.
+Public rotalar: /, /auth/*, /plan/share/*
+
+Sadece bu 4 dosyayı yaz.
+───────────────────────
+
+
+[8C] BACKEND AUTH
+───────────────────────
+2 dosya yaz:
+
+1. backend/app/core/auth.py
+get_current_user dependency. Supabase JWT doğrulama.
+
+2. backend/app/api/v1/auth.py
+POST /register → supabase.auth.sign_up()
+POST /login → supabase.auth.sign_in_with_password()
+GET /me → current user bilgisi
+
+Sadece bu 2 dosyayı yaz.
+───────────────────────
+
+
+[8D] VERİ BAĞLANTISI
+───────────────────────
+Backend endpoint'lerini gerçek DB'ye bağla:
+- persona.py → user_personas tablosu
+- plans.py → travel_plans tablosu
+- Her endpoint get_current_user dependency kullanmalı
+
+Frontend'de:
+- useAuthStore token'ı tüm API isteklerine ekle
+- Token expire → /auth/login
+
+Sadece değiştirilmesi gereken dosyalara dokun.
+───────────────────────
+
+✓ TEST: Kayıt → DB'de user_personas var mı? Plan → travel_plans'ta var mı?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OTURUM 9 — DEPLOY (~30 dk)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[9A]
+───────────────────────
+CLAUDE.md oku. Oturum 9: deploy. Kaldığımız yerden devam et.
+───────────────────────
+
+
+[9B] DEPLOY DOSYALARI
+───────────────────────
+4 dosya yaz:
+
+1. backend/Procfile
+   web: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+2. backend/railway.json
+   Railway build ve start konfigürasyonu.
+
+3. frontend/vercel.json
+   Next.js konfigürasyonu.
+
+4. README.md
+   Kurulum adımları, env variables, deploy adımları.
+
+Sadece bu 4 dosyayı yaz.
+───────────────────────
+
+✓ DEPLOY:
+   git add . && git commit -m "initial" && git push origin main
+   Vercel + Railway otomatik deploy eder.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HATA KOMUTLARI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Terminal hatası:
+───────────────────────
+Hata:
+[hata yapıştır]
+
+Dosya: [dosya adı]
+Düzelt. Sadece o dosyayı değiştir.
+───────────────────────
+
+Görsel sorun:
+───────────────────────
+[sayfa] sayfasında sorun: [açıkla]
+travio_v3_final.html referans al, düzelt.
+Sadece ilgili dosyayı değiştir.
+───────────────────────
+
+Yeni oturum:
+───────────────────────
+CLAUDE.md oku. Oturum [N]: [ne yapacaksın]. Devam et.
+───────────────────────
+
+CLAUDE.md güncelle:
+───────────────────────
+CLAUDE.md dosyasını güncelle:
+MEVCUT DURUM: Oturum [N] tamamlandı — [ne yapıldı]
+SIRADAKI: Oturum [N+1] — [ne yapılacak]
+───────────────────────
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MVP TAMAMLANMA KRİTERLERİ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] Kayıt ol ve giriş yap çalışıyor
+[ ] 5 soruluk onboarding tamamlanıyor
+[ ] AI plan üretiyor (Gemini)
+[ ] Plan detayı görünüyor
+[ ] Affiliate linkler çalışıyor
+[ ] Travio Score görünüyor
+[ ] Mobil görünüm düzgün
+[ ] travio.app'te canlı
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TAHMINI SÜRE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Oturum 1: İskelet        30 dk
+Oturum 2: Temel dosyalar 20 dk
+Oturum 3: Backend        45 dk
+Oturum 4: Auth + Layout  45 dk
+Oturum 5: Landing        45 dk
+Oturum 6: Dashboard+Plan 60 dk
+Oturum 7: Kalan sayfalar 45 dk
+Oturum 8: Supabase       45 dk
+Oturum 9: Deploy         30 dk
+──────────────────────────────
+Toplam: ~6-7 saat (önceki versiyondan %30 az)
+Takvim: 2-3 gün (test dahil)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
