@@ -152,12 +152,17 @@ export interface ChatRequest {
 // Search
 export interface FlightResult {
   airline: string
+  airline_code?: string
   departure: string
   arrival: string
   duration: string
+  stops?: string
   price: number
   currency: string
   url: string
+  origin?: string
+  destination?: string
+  date?: string
 }
 
 export interface HotelResult {

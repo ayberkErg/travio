@@ -93,8 +93,8 @@ async def login(data: LoginRequest):
         res = sb.auth.sign_in_with_password({"email": data.email, "password": data.password})
         if not res.user or not res.session:
             raise HTTPException(status_code=401, detail="Geçersiz email veya şifre")
-        db_res = sb.table("users").select("*").eq("id", res.user.id).single().execute()
-        row = db_res.data or {}
+        db_res = sb.table("users").select("*").eq("id", res.user.id).execute()
+        row = db_res.data[0] if db_res.data else {}
         user = UserResponse(
             id=res.user.id, email=res.user.email or data.email,
             full_name=row.get("full_name"),

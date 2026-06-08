@@ -45,12 +45,12 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> UserR
             raise HTTPException(status_code=401, detail="Geçersiz token")
 
         user_id = auth_res.user.id
-        db_res = sb.table("users").select("*").eq("id", user_id).single().execute()
+        db_res = sb.table("users").select("*").eq("id", user_id).execute()
+        row = db_res.data[0] if db_res.data else None
 
-        if not db_res.data:
+        if not row:
             return UserResponse(id=user_id, email=auth_res.user.email or "")
 
-        row = db_res.data
         return UserResponse(
             id=row["id"], email=row["email"],
             full_name=row.get("full_name"),

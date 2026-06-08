@@ -15,12 +15,20 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
 
+    AMADEUS_API_KEY: str = ""
+    AMADEUS_API_SECRET: str = ""
+
     REDIS_URL: str = "redis://localhost:6379"
 
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
 
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000"]
+    ALLOWED_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "http://localhost:3003",
+    ]
 
     AI_MODE: str = "free"
     PLAN_LIMIT_FREE: int = 3

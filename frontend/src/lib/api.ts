@@ -45,8 +45,11 @@ async function req<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
 
   if (res.status === 401) {
-    localStorage.removeItem('travio-auth')
-    window.location.href = '/auth/login'
+    // Token varken expire olduysa redirect yap, yoksa sessizce fail et
+    if (token) {
+      localStorage.removeItem('travio-auth')
+      window.location.href = '/auth/login'
+    }
     throw new Error('Oturum süresi doldu')
   }
 
@@ -122,10 +125,16 @@ export const chat = {
 
 // Search
 export const search = {
-  flights: (params: { from: string; to: string; date: string; passengers: number }) =>
-    req<FlightResult[]>(
-      `/api/v1/search/flights?from=${params.from}&to=${params.to}&date=${params.date}&passengers=${params.passengers}`
-    ),
+  flights: (params: { from: string; to: string; date: string; return_date?: string; passengers: number }) => {
+    const qs = new URLSearchParams({
+      from: params.from,
+      to: params.to,
+      date: params.date,
+      passengers: String(params.passengers),
+      ...(params.return_date ? { return_date: params.return_date } : {}),
+    })
+    return req<FlightResult[]>(`/api/v1/search/flights?${qs}`)
+  },
 
   hotels: (params: { city: string; check_in: string; check_out: string; guests: number }) =>
     req<HotelResult[]>(

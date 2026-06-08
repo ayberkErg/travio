@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from enum import Enum
 
@@ -86,6 +86,20 @@ class PersonaResponse(PersonaCreate):
     model_config = {"from_attributes": True}
 
 
+_CATEGORY_MAP = {
+    "attraction": "culture", "museum": "culture", "historic": "culture",
+    "history": "culture", "monument": "culture", "temple": "culture",
+    "market": "shopping", "bazaar": "shopping", "store": "shopping",
+    "beach": "nature", "park": "nature", "garden": "nature", "outdoor": "nature",
+    "hike": "nature", "hiking": "nature", "lake": "nature", "mountain": "nature",
+    "bar": "nightlife", "club": "nightlife", "pub": "nightlife", "concert": "nightlife",
+    "restaurant": "food", "cafe": "food", "coffee": "food", "breakfast": "food",
+    "lunch": "food", "dinner": "food", "street_food": "food",
+    "neighborhood": "activity", "walk": "activity", "tour": "activity",
+    "spa": "activity", "wellness": "activity", "sport": "activity",
+}
+
+
 # Plan
 class ActivityItem(BaseModel):
     time: str
@@ -96,6 +110,19 @@ class ActivityItem(BaseModel):
     estimated_cost_try: Optional[float] = None
     booking_url: Optional[str] = None
     tips: Optional[str] = None
+
+    @field_validator("category", mode="before")
+    @classmethod
+    def normalize_category(cls, v: str) -> str:
+        valid = {"culture", "food", "nature", "nightlife", "shopping", "transport", "hotel", "activity"}
+        if isinstance(v, str):
+            normalized = v.lower().replace("-", "_").replace(" ", "_")
+            if normalized in valid:
+                return normalized
+            if normalized in _CATEGORY_MAP:
+                return _CATEGORY_MAP[normalized]
+            return "activity"
+        return v
 
 
 class DayPlan(BaseModel):

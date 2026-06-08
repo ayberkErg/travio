@@ -28,7 +28,10 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
       setLoading: (isLoading) => set({ isLoading }),
-      logout: () => set({ user: null, token: null }),
+      logout: () => {
+        import('@/lib/auth').then(({ signOut }) => signOut()).catch(() => {})
+        set({ user: null, token: null })
+      },
     }),
     { name: 'travio-auth', partialize: (s) => ({ user: s.user, token: s.token }) }
   )
