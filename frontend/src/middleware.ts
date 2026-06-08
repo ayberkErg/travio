@@ -1,6 +1,6 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function middleware(_request: NextRequest) {
+export async function middleware() {
   // Middleware sadece statik dosyaları filtreler
   // Auth kontrolü client tarafında Providers.tsx'deki onAuthStateChange ile yapılıyor
   return NextResponse.next()
