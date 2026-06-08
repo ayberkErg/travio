@@ -23,12 +23,21 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
 
+    FRONTEND_URL: str = ""
+
     ALLOWED_ORIGINS: List[str] = [
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
         "http://localhost:3003",
     ]
+
+    @property
+    def cors_origins(self) -> List[str]:
+        origins = list(self.ALLOWED_ORIGINS)
+        if self.FRONTEND_URL:
+            origins.append(self.FRONTEND_URL)
+        return origins
 
     AI_MODE: str = "free"
     PLAN_LIMIT_FREE: int = 3
