@@ -11,27 +11,34 @@ function AuthSync() {
   const { setUser, setToken, logout } = useAuthStore()
 
   useEffect(() => {
-    const supabase = createClient()
+    let subscription: { unsubscribe: () => void } | null = null
 
-    // Sayfa açılışında mevcut oturumu kontrol et (Google OAuth sonrası)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser(mapSupabaseUser(session.user))
-        setToken(session.access_token)
-      }
-    })
+    try {
+      const supabase = createClient()
 
-    // Oturum değişikliklerini dinle (login/logout/token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(mapSupabaseUser(session.user))
-        setToken(session.access_token)
-      } else {
-        logout()
-      }
-    })
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          setUser(mapSupabaseUser(session.user))
+          setToken(session.access_token)
+        }
+      }).catch(() => {})
 
-    return () => subscription.unsubscribe()
+      const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        if (session?.user) {
+          setUser(mapSupabaseUser(session.user))
+          setToken(session.access_token)
+        } else if (event === 'SIGNED_OUT') {
+          // Only clear state on explicit sign-out, not on initial null session
+          setUser(null)
+          setToken(null)
+        }
+      })
+      subscription = data.subscription
+    } catch {
+      // Supabase not configured — app runs without auth
+    }
+
+    return () => subscription?.unsubscribe()
   }, [setUser, setToken, logout])
 
   return null
