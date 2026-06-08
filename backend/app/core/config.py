@@ -30,6 +30,8 @@ class Settings(BaseSettings):
         "http://localhost:3001",
         "http://localhost:3002",
         "http://localhost:3003",
+        "https://travio-production-6272.up.railway.app",
+        "https://travio-production-0bbc.up.railway.app",
     ]
 
     @property
