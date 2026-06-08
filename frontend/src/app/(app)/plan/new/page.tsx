@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import api from '@/lib/api'
@@ -34,7 +34,7 @@ const TEMPO_OPTIONS = [
   { value: 'intensive', label: 'Yoğun', emoji: '⚡', desc: 'Her şeyi gör' },
 ] as const
 
-export default function NewPlanPage() {
+function NewPlanForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuthStore()
@@ -340,5 +340,13 @@ export default function NewPlanPage() {
         </button>
       </form>
     </div>
+  )
+}
+
+export default function NewPlanPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64 text-stone-400">Yükleniyor...</div>}>
+      <NewPlanForm />
+    </Suspense>
   )
 }
