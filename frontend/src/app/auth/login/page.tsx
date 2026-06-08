@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/store'
-import { signInWithEmail, signInWithGoogle, signInWithApple } from '@/lib/auth'
+import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithApple } from '@/lib/auth'
 
 function GoogleIcon() {
   return (
@@ -51,8 +51,21 @@ export default function LoginPage() {
       setUser(user)
       setToken(token)
       router.push('/dashboard')
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Giriş başarısız')
+    } catch {
+      // Login failed — try auto-register with same credentials
+      try {
+        const name = form.email.split('@')[0]
+        const { user, token } = await signUpWithEmail(form.email, form.password, name)
+        if (user && token) {
+          setUser(user)
+          setToken(token)
+          router.push('/auth/onboarding')
+        } else {
+          toast.error('Email onayı gerekiyor, lütfen mailinizi kontrol edin.')
+        }
+      } catch (err2) {
+        toast.error(err2 instanceof Error ? err2.message : 'Giriş başarısız')
+      }
     } finally {
       setLoading(false)
     }
