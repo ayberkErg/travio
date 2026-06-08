@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { AIRPORTS } from './airports'
 
 // Büyük şehirler için koordinat → havalimanı eşlemesi (hızlı lookup)
 const CITY_AIRPORTS: { lat: number; lon: number; iata: string; city: string }[] = [
