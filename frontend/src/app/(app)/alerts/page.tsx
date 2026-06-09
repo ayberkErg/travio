@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuthStore, useUIStore } from '@/store'
-import { isPlusUser } from '@/lib/utils'
+import { useUIStore } from '@/store'
 import { alertsApi } from '@/lib/api'
 import AirportInput from '@/components/ui/AirportInput'
 import toast from 'react-hot-toast'
@@ -58,9 +57,8 @@ function showBrowserNotification(alert: PriceAlert) {
 }
 
 export default function AlertsPage() {
-  const { user } = useAuthStore()
   const { openPlusModal } = useUIStore()
-  const isPlus = user ? isPlusUser(user.subscription_tier) : false
+  const isPlus = true // TODO: restore Plus check when billing is live
 
   const [alerts, setAlerts] = useState<PriceAlert[]>([])
   const [loading, setLoading] = useState(true)
