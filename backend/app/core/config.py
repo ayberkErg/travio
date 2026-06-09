@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
 
+    RESEND_API_KEY: str = ""
+    ALERT_FROM_EMAIL: str = "alarms@travio.app"
+    CRON_SECRET: str = "travio-cron-secret"
+
     FRONTEND_URL: str = ""
 
     ALLOWED_ORIGINS: List[str] = [

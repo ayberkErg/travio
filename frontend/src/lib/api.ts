@@ -146,5 +146,14 @@ export const affiliate = {
     }),
 }
 
-const api = { auth, persona, plans, chat, search, affiliate }
+// Alerts
+import type { PriceAlert } from '@/types'
+export const alertsApi = {
+  list: () => req<PriceAlert[]>('/api/v1/alerts'),
+  create: (data: { from_iata: string; to_iata: string; from_city: string; to_city: string; target_price: number }) =>
+    req<PriceAlert>('/api/v1/alerts', { method: 'POST', body: JSON.stringify(data) }),
+  delete: (id: string) => req<void>(`/api/v1/alerts/${id}`, { method: 'DELETE' }),
+}
+
+const api = { auth, persona, plans, chat, search, affiliate, alerts: alertsApi }
 export default api

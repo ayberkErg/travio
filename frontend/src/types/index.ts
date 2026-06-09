@@ -189,3 +189,16 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info'
   message: string
 }
+
+export interface PriceAlert {
+  id: string
+  from_iata: string
+  to_iata: string
+  from_city: string
+  to_city: string
+  target_price: number
+  current_price?: number
+  is_triggered: boolean
+  created_at: string
+  last_checked_at?: string
+}

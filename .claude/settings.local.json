@@ -49,7 +49,13 @@
       "Bash(venv/bin/python *)",
       "Bash(venv/bin/uvicorn app.main:app --reload --port 8000)",
       "Bash(gh repo *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "WebFetch(domain:travio-production-0bbc.up.railway.app)",
+      "Bash(xargs ls -la)",
+      "WebFetch(domain:travio-production-6272.up.railway.app)",
+      "WebFetch(domain:travio-production-4dec5454.up.railway.app)",
+      "Bash(sed -n '50,65p' /Users/ayberkerguc/Desktop/gezio/frontend/src/app/\\\\\\(app\\\\\\)/settings/page.tsx)",
+      "Bash(sed -n '105,120p' /Users/ayberkerguc/Desktop/gezio/frontend/src/components/layout/Sidebar.tsx)"
     ]
   }
 }

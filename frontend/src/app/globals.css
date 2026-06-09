@@ -202,6 +202,12 @@
   .font-mono { font-family: var(--font-mono); }
   .text-balance { text-wrap: balance; }
 
+  /* Text size utilities */
+  .text-2xs { font-size: 0.65rem; line-height: 1rem; }
+
+  /* Shape utilities */
+  .rounded-pill { border-radius: 999px; }
+
   /* Color utilities */
   .bg-night { background-color: var(--night); }
   .bg-night-2 { background-color: var(--night-2); }
