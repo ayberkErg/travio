@@ -71,7 +71,7 @@ export default function PlanDetailPage() {
 
   useEffect(() => {
     if (!plan) {
-      api.plans.get(id).then(setPlan).catch(() => router.push('/dashboard'))
+      api.plans.get(id).then(setPlan).catch(() => {})
     }
   }, [id, plan, router])
 

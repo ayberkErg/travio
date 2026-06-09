@@ -45,11 +45,6 @@ async function req<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
 
   if (res.status === 401) {
-    // Token varken expire olduysa redirect yap, yoksa sessizce fail et
-    if (token) {
-      localStorage.removeItem('travio-auth')
-      window.location.href = '/auth/login'
-    }
     throw new Error('Oturum süresi doldu')
   }
 
