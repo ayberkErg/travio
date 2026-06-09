@@ -2,8 +2,41 @@ import os
 import json
 from datetime import datetime
 from typing import Optional
+import httpx
 from app.core.config import settings
 from app.schemas.travel import GeneratedPlan, PersonaResponse, PlanGenerateRequest, ChatMessage
+
+
+async def _fetch_weather(city: str, start_date: str) -> str:
+    """wttr.in'den hava durumu çeker. API key gerekmez."""
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"https://wttr.in/{city}?format=j1")
+            if r.status_code != 200:
+                return ""
+            data = r.json()
+            current = data["current_condition"][0]
+            temp_c = int(current["temp_C"])
+            feels_c = int(current["FeelsLikeC"])
+            desc = current["weatherDesc"][0]["value"]
+            humidity = current["humidity"]
+
+            # Tahmin (varsa ilk 3 gün)
+            forecasts = []
+            for day in data.get("weather", [])[:3]:
+                date = day["date"]
+                max_c = int(day["maxtempC"])
+                min_c = int(day["mintempC"])
+                day_desc = day["hourly"][4]["weatherDesc"][0]["value"] if day.get("hourly") else ""
+                forecasts.append(f"{date}: {min_c}°C–{max_c}°C, {day_desc}")
+
+            forecast_str = " | ".join(forecasts)
+            return (
+                f"Hava Durumu ({city}): Şu an {temp_c}°C (hissedilen {feels_c}°C), {desc}, nem %{humidity}. "
+                f"Tahmin: {forecast_str}"
+            )
+    except Exception:
+        return ""
 
 PLAN_SYSTEM_PROMPT = """
 Sen dünyanın en iyi seyahat editörüsün — Condé Nast Traveller + Time Out kalitesinde, o şehirde yıllarca yaşamış bir yerel gibi yazan uzman.
@@ -136,7 +169,7 @@ Gerektiğinde affiliate link öner — tavsiye tonu kullan.
 """
 
 
-def _build_plan_prompt(request: PlanGenerateRequest, persona: Optional[PersonaResponse]) -> str:
+def _build_plan_prompt(request: PlanGenerateRequest, persona: Optional[PersonaResponse], weather: str = "") -> str:
     persona_info = ""
     if persona:
         persona_info = f"""
@@ -148,8 +181,10 @@ Kullanıcı Profili:
 - Günlük bütçe: ${persona.typical_daily_budget_usd}
 """
 
+    weather_section = f"\nGerçek Zamanlı Hava Durumu:\n{weather}\n⚠️ HAVA DURUMUNA GÖRE AKTİVİTE SEÇ: Soğuk/yağışlıysa plaj/dış mekan yerine müze/kafe/kapalı alan öner. Sıcaksa sabah erken/akşam geç açık hava aktiviteleri planla." if weather else ""
+
     return f"""
-{persona_info}
+{persona_info}{weather_section}
 Seyahat Detayları:
 - Kalkış: {request.origin_city}
 - Destinasyon: {request.destination}
@@ -167,7 +202,8 @@ Yukarıdaki bilgilere göre tam seyahat planı JSON'u üret.
 
 
 async def generate_plan(request: PlanGenerateRequest, persona: Optional[PersonaResponse] = None) -> GeneratedPlan:
-    prompt = _build_plan_prompt(request, persona)
+    weather = await _fetch_weather(request.destination, request.start_date)
+    prompt = _build_plan_prompt(request, persona, weather)
 
     if settings.AI_MODE == "paid":
         return await _generate_plan_claude(prompt)

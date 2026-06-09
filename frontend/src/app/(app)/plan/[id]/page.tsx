@@ -64,6 +64,7 @@ export default function PlanDetailPage() {
   const [tab, setTab] = useState<Tab>('plan')
   const [activeDay, setActiveDay] = useState(0)
   const [checklist, setChecklist] = useState<Record<string, boolean>>({})
+  const [weather, setWeather] = useState<{ temp: string; desc: string; icon: string } | null>(null)
   const [chatInput, setChatInput] = useState('')
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
   const [chatLoading, setChatLoading] = useState(false)
@@ -74,6 +75,40 @@ export default function PlanDetailPage() {
       api.plans.get(id).then(setPlan).catch(() => {})
     }
   }, [id, plan, router])
+
+  // Checklist'i localStorage'dan yükle
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`checklist-${id}`)
+      if (saved) setChecklist(JSON.parse(saved))
+    } catch {}
+  }, [id])
+
+  // Checklist değişince kaydet
+  useEffect(() => {
+    if (Object.keys(checklist).length > 0) {
+      localStorage.setItem(`checklist-${id}`, JSON.stringify(checklist))
+    }
+  }, [checklist, id])
+
+  // Hava durumu çek
+  useEffect(() => {
+    if (!plan?.destination) return
+    fetch(`https://wttr.in/${encodeURIComponent(plan.destination)}?format=j1`)
+      .then(r => r.json())
+      .then(data => {
+        const c = data.current_condition?.[0]
+        if (!c) return
+        const code = parseInt(c.weatherCode)
+        const icon = code <= 113 ? '☀️' : code <= 176 ? '⛅' : code <= 260 ? '🌧️' : code <= 350 ? '🌨️' : '⛈️'
+        setWeather({
+          temp: `${c.temp_C}°C`,
+          desc: c.weatherDesc?.[0]?.value ?? '',
+          icon,
+        })
+      })
+      .catch(() => {})
+  }, [plan?.destination])
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -160,6 +195,16 @@ export default function PlanDetailPage() {
                 <h1 className="font-serif text-3xl text-ink">{p.destination}</h1>
                 <p className="text-stone-500 text-sm">{p.country}</p>
               </div>
+              {weather && (
+                <div className="ml-4 flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium"
+                  style={{ background: 'var(--stone-50)', border: '1px solid var(--stone-100)' }}>
+                  <span className="text-xl">{weather.icon}</span>
+                  <div>
+                    <span className="text-ink font-semibold">{weather.temp}</span>
+                    <span className="text-stone-400 text-xs ml-1">{weather.desc}</span>
+                  </div>
+                </div>
+              )}
             </div>
             <p className="text-stone-600 text-sm leading-relaxed max-w-2xl">{p.summary}</p>
           </div>
