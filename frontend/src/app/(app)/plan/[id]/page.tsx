@@ -28,10 +28,28 @@ function ActivityCard({ activity }: { activity: ActivityItem }) {
             </span>
           )}
         </div>
-        <h4 className="font-medium text-ink text-sm">{activity.name}</h4>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h4 className="font-medium text-ink text-sm">{activity.name}</h4>
+          {activity.google_rating && (
+            <span className="inline-flex items-center gap-1 text-xs font-semibold px-1.5 py-0.5 rounded-md"
+              style={{ background: activity.google_rating >= 4.5 ? '#dcfce7' : activity.google_rating >= 4.0 ? '#fef9c3' : '#fee2e2',
+                       color: activity.google_rating >= 4.5 ? '#16a34a' : activity.google_rating >= 4.0 ? '#ca8a04' : '#dc2626' }}>
+              ★ {activity.google_rating.toFixed(1)}
+              {activity.google_review_count ? (
+                <span className="font-normal opacity-70">({activity.google_review_count >= 1000
+                  ? `${(activity.google_review_count / 1000).toFixed(1)}k`
+                  : activity.google_review_count})</span>
+              ) : null}
+            </span>
+          )}
+        </div>
         <p className="text-stone-500 text-xs mt-0.5 leading-relaxed">{activity.description}</p>
         {activity.location && (
-          <p className="text-xs text-stone-400 mt-1">📍 {activity.location}</p>
+          <p className="text-xs text-stone-400 mt-1">
+            {activity.google_maps_url
+              ? <a href={activity.google_maps_url} target="_blank" rel="noopener noreferrer" className="hover:underline">📍 {activity.location}</a>
+              : <>📍 {activity.location}</>}
+          </p>
         )}
         {activity.tips && (
           <p className="text-xs text-amber mt-1">💡 {activity.tips}</p>

@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
 
+    GOOGLE_PLACES_API_KEY: str = ""
+
     AMADEUS_API_KEY: str = ""
     AMADEUS_API_SECRET: str = ""
 

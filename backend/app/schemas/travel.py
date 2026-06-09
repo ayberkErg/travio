@@ -110,6 +110,9 @@ class ActivityItem(BaseModel):
     estimated_cost_try: Optional[float] = None
     booking_url: Optional[str] = None
     tips: Optional[str] = None
+    google_rating: Optional[float] = None
+    google_review_count: Optional[int] = None
+    google_maps_url: Optional[str] = None
 
     @field_validator("category", mode="before")
     @classmethod

@@ -201,17 +201,74 @@ Yukarıdaki bilgilere göre tam seyahat planı JSON'u üret.
 """
 
 
+_SKIP_CATEGORIES = {"transport", "hotel"}
+
+async def _fetch_place_rating(place_name: str, destination: str) -> dict:
+    """Google Places Find Place API ile mekan puanı çeker."""
+    if not settings.GOOGLE_PLACES_API_KEY:
+        return {}
+    try:
+        query = f"{place_name} {destination}"
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(
+                "https://maps.googleapis.com/maps/api/place/findplacefromtext/json",
+                params={
+                    "input": query,
+                    "inputtype": "textquery",
+                    "fields": "name,rating,user_ratings_total,place_id",
+                    "key": settings.GOOGLE_PLACES_API_KEY,
+                },
+            )
+            data = r.json()
+            candidates = data.get("candidates", [])
+            if not candidates:
+                return {}
+            place = candidates[0]
+            rating = place.get("rating")
+            count = place.get("user_ratings_total", 0)
+            place_id = place.get("place_id", "")
+            maps_url = f"https://www.google.com/maps/place/?q=place_id:{place_id}" if place_id else ""
+            return {"rating": rating, "count": count, "maps_url": maps_url}
+    except Exception:
+        return {}
+
+
+async def _enrich_plan_with_ratings(plan: GeneratedPlan, destination: str) -> GeneratedPlan:
+    """Plan üretildikten sonra aktivitelere Google Places puanı ekler."""
+    if not settings.GOOGLE_PLACES_API_KEY:
+        return plan
+
+    import asyncio
+
+    async def enrich_activity(activity):
+        if activity.category.value in _SKIP_CATEGORIES:
+            return activity
+        result = await _fetch_place_rating(activity.name, destination)
+        if result.get("rating"):
+            activity.google_rating = round(result["rating"], 1)
+            activity.google_review_count = result.get("count")
+            activity.google_maps_url = result.get("maps_url", "")
+        return activity
+
+    for day in plan.days:
+        day.activities = list(await asyncio.gather(*[enrich_activity(a) for a in day.activities]))
+
+    return plan
+
+
 async def generate_plan(request: PlanGenerateRequest, persona: Optional[PersonaResponse] = None) -> GeneratedPlan:
     weather = await _fetch_weather(request.destination, request.start_date)
     prompt = _build_plan_prompt(request, persona, weather)
 
     if settings.AI_MODE == "paid":
-        return await _generate_plan_claude(prompt)
+        plan = await _generate_plan_claude(prompt)
     else:
         try:
-            return await _generate_plan_groq(prompt)
+            plan = await _generate_plan_groq(prompt)
         except Exception:
-            return await _generate_plan_gemini(prompt)
+            plan = await _generate_plan_gemini(prompt)
+
+    return await _enrich_plan_with_ratings(plan, request.destination)
 
 
 async def _generate_plan_gemini(prompt: str) -> GeneratedPlan:

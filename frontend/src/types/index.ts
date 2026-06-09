@@ -59,6 +59,9 @@ export interface ActivityItem {
   estimated_cost_try?: number
   booking_url?: string
   tips?: string
+  google_rating?: number
+  google_review_count?: number
+  google_maps_url?: string
 }
 
 export interface DayPlan {
