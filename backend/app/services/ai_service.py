@@ -173,9 +173,9 @@ async def generate_plan(request: PlanGenerateRequest, persona: Optional[PersonaR
         return await _generate_plan_claude(prompt)
     else:
         try:
-            return await _generate_plan_gemini(prompt)
-        except Exception:
             return await _generate_plan_groq(prompt)
+        except Exception:
+            return await _generate_plan_gemini(prompt)
 
 
 async def _generate_plan_gemini(prompt: str) -> GeneratedPlan:
