@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Header
 from typing import List, Optional
 from datetime import datetime
 from app.schemas.travel import PlanGenerateRequest, PlanResponse, PersonaResponse, UserResponse
@@ -122,11 +122,13 @@ async def generate_plan(
 
 
 @router.get("", response_model=List[PlanResponse])
-async def list_plans(current_user: UserResponse = Depends(get_current_user)):
+async def list_plans(authorization: Optional[str] = Header(None)):
+    current_user = await get_current_user(authorization)
     sb = get_supabase()
     res = sb.table("travel_plans").select("*").eq("user_id", current_user.id).order("created_at", desc=True).execute()
     plans = []
     for row in (res.data or []):
+        row = dict(row)
         plan_data = row.pop("plan_data", None)
         plans.append(PlanResponse(**row, plan=plan_data))
     return plans
@@ -147,20 +149,23 @@ async def get_plan(plan_id: str, authorization: Optional[str] = Header(None)):
 
 
 @router.delete("/{plan_id}")
-async def delete_plan(plan_id: str, current_user: UserResponse = Depends(get_current_user)):
+async def delete_plan(plan_id: str, authorization: Optional[str] = Header(None)):
+    current_user = await get_current_user(authorization)
     sb = get_supabase()
     sb.table("travel_plans").delete().eq("id", plan_id).eq("user_id", current_user.id).execute()
     return {"ok": True}
 
 
 @router.put("/{plan_id}/favorite", response_model=PlanResponse)
-async def toggle_favorite(plan_id: str, current_user: UserResponse = Depends(get_current_user)):
+async def toggle_favorite(plan_id: str, authorization: Optional[str] = Header(None)):
+    current_user = await get_current_user(authorization)
     sb = get_supabase()
     res = sb.table("travel_plans").select("is_favorite").eq("id", plan_id).eq("user_id", current_user.id).single().execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="Plan bulunamadı")
     new_val = not res.data["is_favorite"]
-    upd = sb.table("travel_plans").update({"is_favorite": new_val}).eq("id", plan_id).execute()
-    row = upd.data[0]
+    sb.table("travel_plans").update({"is_favorite": new_val}).eq("id", plan_id).execute()
+    fresh = sb.table("travel_plans").select("*").eq("id", plan_id).single().execute()
+    row = dict(fresh.data)
     plan_data = row.pop("plan_data", None)
     return PlanResponse(**row, plan=plan_data)

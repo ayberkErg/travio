@@ -131,7 +131,7 @@ export default function Sidebar() {
 
       {/* Logo */}
       <div className="px-5 pt-5 pb-4" style={{ borderBottom: '1px solid var(--stone-100)' }}>
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/landing" className="flex items-center gap-2">
           <span className="font-serif text-2xl tracking-tight" style={{ color: 'var(--ink)' }}>travio</span>
           <span className="w-2 h-2 rounded-full" style={{ background: 'var(--amber)' }} />
           {isPlus && (
